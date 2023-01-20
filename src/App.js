@@ -1,28 +1,47 @@
 import { useState } from "react";
 
 const ColorForm = (props) => {
+    const [colors, setColors] = useState([]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        props.sendColor(colors);
+        console.log(`Colores desde ColorForm: ${colors}`);
+    };
+
     return (
         <div>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <label htmlFor="color">Ingrese un color: </label>
-                <input type="text" name="color" />
+                <input
+                    type="text"
+                    name="color"
+                    onChange={(e) => setColors(e.target.value)}
+                    value={colors}
+                />
+                <button type="submit">Agregar</button>
             </form>
         </div>
     );
 };
 
-const Blocks = (props) => {
-    const blocks = [];
-    blocks.push(<Block color="red" />);
+const Blocks = ({ colors }) => {
+    console.log(`Colores desde Blocks: ${colors}`);
+    let listItems = colors.map((color) => {
+        console.log(`Colores desde map: ${color}`);
+        return <Block color={color} />;
+    });
+    return listItems;
 };
 
-const Block = (props) => {
+const Block = ({ color }) => {
+    console.log(`Colores desde Block: ${color}`);
     return (
         <div
             style={{
-                backgroundColor: props.color,
-                width: "200px",
-                height: "200px",
+                backgroundColor: color,
+                width: "100px",
+                height: "100px",
             }}
         ></div>
     );
@@ -30,12 +49,18 @@ const Block = (props) => {
 
 const App = () => {
     const [colors, setColors] = useState([]);
+    console.log(`Colores desde App: ${colors}`);
 
-    const agregarColor = (color) => {
+    const addColor = (color) => {
         setColors([...colors, color]);
     };
 
-    return <ColorForm agregarColor={agregarColor} />;
+    return (
+        <div>
+            <ColorForm sendColor={addColor} />
+            <Blocks colors={colors} />
+        </div>
+    );
 };
 
 export default App;
